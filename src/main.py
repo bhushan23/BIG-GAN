@@ -24,15 +24,22 @@ parser.add_argument('--checkpoint_dir', type = str, default = '../checkpoints')
 args = parser.parse_args()
 
 # Load CIFAR data
-loader = torch.utils.data.DataLoader(
-            datasets.CIFAR10('../data', train = True, download = True,
-                transform = transforms.Compose([
-                    transforms.ToTensor(),
-                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])),
-                batch_size = args.batch_size, shuffle = True, num_workers = 1)
+# loader = torch.utils.data.DataLoader(
+#            datasets.CIFAR10('../data', train = True, download = True,
+#                transform = transforms.Compose([
+#                    transforms.ToTensor(),
+#                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])),
+#                batch_size = args.batch_size, shuffle = True, num_workers = 1)
+img_transform = transforms.Compose([transforms.Resize((128, 128)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+celeba_dataset = datasets.ImageFolder(root='/home/bsonawane/work/sem-2/prior/data/PG-GAN/celebA-down/celeba/img_align_celeba/',
+                                           transform = img_transform)
+
+loader = torch.utils.data.DataLoader(celeba_dataset, batch_size=args.batch_size, shuffle=True, num_workers=4)
 
 # Dump image
 data, _ = next(iter(loader))
+print('Size: ', data.shape)
 utils.save_image(data, '../input_data.jpg')
 
 # Controlling variables

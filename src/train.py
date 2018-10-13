@@ -26,8 +26,8 @@ def evaluate(generator, discriminator, x, epoch, output_dir = './output/'):
 def train(generator, discriminator, gen_optimizer, dis_optimizer,
           data_loader, dis_iterations = 2, batch_size = 32, num_epochs = 10,
           z_dim = 128, checkpoints_dir = '../checkpoints'):
-    print('Generator', generator)
-    print('Discriminator', discriminator)
+    # print('Generator', generator)
+    # print('Discriminator', discriminator)
 
     # Exponentially Decaying learning rate
     exp_lr_d = optim.lr_scheduler.ExponentialLR(dis_optimizer, gamma=0.99)
