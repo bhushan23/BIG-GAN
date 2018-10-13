@@ -8,6 +8,7 @@ import torch.optim as optim
 import torchvision as tv
 
 # Custom import
+import utils
 import model
 from res_net import *
 
@@ -20,7 +21,7 @@ def get_cuda(x):
 def evaluate(generator, discriminator, x, epoch, output_dir = './output/'):
     samples = generator(x)
     file_name = output_dir + 'Epoch_{}.jpg'.format(epoch)
-    tv.utils.save_image(samples, file_name)
+    utils.save_image(samples, file_name)
 
 def train(generator, discriminator, gen_optimizer, dis_optimizer,
           data_loader, dis_iterations = 2, batch_size = 32, num_epochs = 10,
@@ -79,5 +80,5 @@ def train(generator, discriminator, gen_optimizer, dis_optimizer,
         print('Epoch {}'.format(epoch), ' Loss: Generator = ', total_gen_loss.item(), ' Discriminator = ', total_dis_loss.item())
         evaluate(generator, discriminator, fixed_x, epoch, output_dir = output_dir)
         if epoch % 5 == 0:
-            torch.save(discriminator.save_dict(), os.path.join(model_dir), 'dis_{}'.format(epoch / 5))
-            torch.save(generator.save_dict(), os.path.join(model_dir), 'gen_{}'.format(epoch / 5))
+            torch.save(discriminator.state_dict(), os.path.join(model_dir), 'dis_{}'.format(epoch / 5))
+            torch.save(generator.state_dict(), os.path.join(model_dir), 'gen_{}'.format(epoch / 5))

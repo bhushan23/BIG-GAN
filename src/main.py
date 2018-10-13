@@ -8,8 +8,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
+import torchvision  as tv
 
 # Custom import
+import utils
 import model
 import train
 from res_net import *
@@ -28,6 +30,10 @@ loader = torch.utils.data.DataLoader(
                     transforms.ToTensor(),
                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])),
                 batch_size = args.batch_size, shuffle = True, num_workers = 1)
+
+# Dump image
+data, _ = next(iter(loader))
+utils.save_image(data, '../input_data.jpg')
 
 # Controlling variables
 z_dim = 128
