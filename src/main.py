@@ -32,18 +32,16 @@ loader = torch.utils.data.DataLoader(
 # Controlling variables
 z_dim = 128
 dis_iterations = 2
-is_cuda = False
 num_epochs = 100
 
 generator = model.Generator(z_dim)
 discriminator = model.Discriminator()
 
-if is_cuda == True:
-    generator = generator.cuda()
-    discriminator = discriminator.cuda()
+generator = train.get_cuda(generator)
+discriminator = train.get_cuda(discriminator)
 
 gen_optimizer = optim.Adam(generator.parameters(), lr = 2e-5, betas = (0.0, 0.999))
 dis_optimizer = optim.Adam(discriminator.parameters(), lr = 5e-5, betas = (0.0, 0.999))
 
 train.train(generator, discriminator, gen_optimizer, dis_optimizer, loader, dis_iterations,
-            batch_size = args.batch_size, num_epochs = num_epochs, is_cuda = is_cuda)
+            batch_size = args.batch_size, num_epochs = num_epochs)

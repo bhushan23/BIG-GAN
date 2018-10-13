@@ -13,7 +13,7 @@ from res_net import *
 
 IS_CUDA = False
 def get_cuda(x):
-    if IS_CUDA:
+    if torch.cuda.is_available():
         return x.cuda()
     return x
 
@@ -23,7 +23,7 @@ def evaluate(generator, discriminator, x, epoch, output_dir = './output/'):
     tv.utils.save_image(samples, file_name)
 
 def train(generator, discriminator, gen_optimizer, dis_optimizer,
-          data_loader, dis_iterations = 2, batch_size = 32, num_epochs = 10, is_cuda = False,
+          data_loader, dis_iterations = 2, batch_size = 32, num_epochs = 10,
           z_dim = 128, checkpoints_dir = '../checkpoints'):
     print('Generator', generator)
     print('Discriminator', discriminator)
@@ -31,8 +31,6 @@ def train(generator, discriminator, gen_optimizer, dis_optimizer,
     # Exponentially Decaying learning rate
     exp_lr_d = optim.lr_scheduler.ExponentialLR(dis_optimizer, gamma=0.99)
     exp_lr_g = optim.lr_scheduler.ExponentialLR(gen_optimizer, gamma=0.99)
-    global IS_CUDA
-    IS_CUDA = is_cuda
 
     fixed_x = get_cuda(torch.randn(batch_size, z_dim))
 
@@ -47,14 +45,11 @@ def train(generator, discriminator, gen_optimizer, dis_optimizer,
         for batch_idx, (data, target) in enumerate(data_loader):
             if data.size()[0] != batch_size:
                 continue
-            if is_cuda:
-                data = data.cuda()
-                target = target.cuda()
+            data = get_cuda(data)
+            target = get_cuda(target)
 
             for _ in range(dis_iterations):
-                z = torch.randn(batch_size, z_dim)
-                if is_cuda:
-                    z = z.cuda()
+                z = get_cuda(torch.randn(batch_size, z_dim))
 
                 gen_optimizer.zero_grad()
                 dis_optimizer.zero_grad()
